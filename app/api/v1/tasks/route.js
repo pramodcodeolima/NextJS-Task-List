@@ -2,9 +2,36 @@ import connectMongoDB from '@/libs/mongodb';
 import Task from '@/models/task';
 import { NextResponse } from 'next/server';
 
+
+//Create Task
 export async function POST(request) {
-    const { task, description } = await request.json()
+    try {
+        const { task, description } = await request.json()
+        await connectMongoDB();
+        await Task.create({ task, description });
+        return NextResponse.json({ message: 'Task Created'}, { status: 201 })
+    } catch (error) {
+        return NextResponse.json(error)
+    }
+}
+
+
+//Show Tasks
+export async function GET() {
     await connectMongoDB();
-    await Task.create({ task, description });
-    return NextResponse.json({ message: 'Task Created'}, { status: 201 })
+    const tasks = await Task.find();
+    return NextResponse.json({tasks})
+}
+
+
+//Delete Task
+export async function DELETE(request) {
+    try {
+        const id = request.nextUrl.searchParams.get('id')
+        await connectMongoDB();
+        await Task.findByIdAndDelete(id);
+        return NextResponse.json({ message: 'Task Deleted'}, { status: 200 })
+    } catch (error) {
+        return NextResponse.json(error)
+    }
 }
