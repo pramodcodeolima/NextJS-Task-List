@@ -18,9 +18,13 @@ export async function POST(request) {
 
 //Show Tasks
 export async function GET() {
-    await connectMongoDB();
-    const tasks = await Task.find();
-    return NextResponse.json({tasks})
+    try {
+        await connectMongoDB();
+        const tasks = await Task.find();
+        return NextResponse.json({tasks})
+    } catch (error) {
+        return NextResponse.json(error)
+    }
 }
 
 

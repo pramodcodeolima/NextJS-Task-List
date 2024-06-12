@@ -20,8 +20,12 @@ export async function PUT(request, { params }) {
 
 //Get Task on ID
 export async function GET(request, { params }) {
-    const { id } = params;
-    await connectMongoDB();
-    const task = await Task.findOne({ _id: id });
-    return NextResponse.json({ task }, { status: 200 })
+    try {
+        const { id } = params;
+        await connectMongoDB();
+        const task = await Task.findOne({ _id: id });
+        return NextResponse.json({ task }, { status: 200 })
+    } catch (error) {
+        return NextResponse.json(error)
+    }
 }
